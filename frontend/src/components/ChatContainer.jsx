@@ -20,12 +20,11 @@ const ChatContainer = () => {
   const messageEndRef = useRef(null);
 
   useEffect(() => {
+    if (!selectedUser) return;
     getMessages(selectedUser._id);
-
     subscribeToMessages();
-
     return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
   useEffect(() => {
     if (messageEndRef.current && messages) {
@@ -33,9 +32,11 @@ const ChatContainer = () => {
     }
   }, [messages]);
 
+  if (!selectedUser) return null;
+
   if (isMessagesLoading) {
     return (
-      <div className="flex-1 flex flex-col overflow-auto">
+      <div className="flex-1 flex flex-col overflow-auto bg-[#0e0e0e]">
         <ChatHeader />
         <MessageSkeleton />
         <MessageInput />
@@ -44,49 +45,77 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col overflow-auto">
+    <div className="flex-1 flex flex-col overflow-auto bg-[#0e0e0e]">
       <ChatHeader />
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
-          <div
-            key={message._id}
-            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-            ref={messageEndRef}
-          >
-            <div className=" chat-image avatar">
-              <div className="size-10 rounded-full border">
-                <img
-                  src={
-                    message.senderId === authUser._id
-                      ? authUser.profilePic || "/avatar.png"
-                      : selectedUser.profilePic || "/avatar.png"
-                  }
-                  alt="profile pic"
-                />
-              </div>
-            </div>
-            <div className="chat-header mb-1">
-              <time className="text-xs opacity-50 ml-1">
-                {formatMessageTime(message.createdAt)}
-              </time>
-            </div>
-            <div className="chat-bubble flex flex-col">
-              {message.image && (
-                <img
-                  src={message.image}
-                  alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
-                />
+        {messages.map((message) => {
+          const isOwn = message.senderId === authUser._id;
+          const sender = isOwn ? authUser : selectedUser;
+
+          return (
+            <div
+              key={message._id}
+              ref={messageEndRef}
+              className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+            >
+              {/* Avatar */}
+              {!isOwn && (
+                <div className="mr-2 flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border border-stone-700">
+                    <img
+                      src={sender.profilePic || "/avatar.png"}
+                      alt={sender.fullName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
               )}
-              {message.text && <p>{message.text}</p>}
+
+              {/* Message Bubble */}
+              <div
+                className={`max-w-xs sm:max-w-md px-4 py-2 rounded-2xl flex flex-col
+                  ${isOwn ? "bg-gradient-to-br from-stone-900 to-stone-700 text-white" : "bg-stone-800 text-stone-200"}
+                  shadow-lg
+                `}
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <time className="text-xs opacity-50">
+                    {formatMessageTime(message.createdAt)}
+                  </time>
+                </div>
+
+                {message.image && (
+                  <img
+                    src={message.image}
+                    alt="Attachment"
+                    className="rounded-md mb-2 max-w-full sm:max-w-[250px]"
+                  />
+                )}
+
+                {message.text && <p className="break-words">{message.text}</p>}
+              </div>
+
+              {/* Avatar for own messages */}
+              {isOwn && (
+                <div className="ml-2 flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border border-stone-700">
+                    <img
+                      src={sender.profilePic || "/avatar.png"}
+                      alt={sender.fullName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <MessageInput />
     </div>
   );
 };
+
 export default ChatContainer;
