@@ -18,8 +18,6 @@ const Navbar = () => {
                 <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-all">
                   <img src="/shield.svg" alt="" className='h-5' />
                   <h1 className="text-lg font-bold max-sm:hidden ">Vartalap</h1>
-                  <div className='bg-neutral-200 px-2 py-0.5 font-semibold rounded-xl border border-neutral-800 max-sm:hidden'>
-                  </div>
                 </Link>
               </div>
 
