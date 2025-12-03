@@ -6,7 +6,7 @@ const Navbar = () => {
   const { logout, authUser } = useAuthStore();
 
   return (
-    <header className="fixed top-0 w-full sm:w-2/3 md:w-1/2 z-40 backdrop-blur-lg bg-[#0e0e0e]/80">
+    <header className="fixed top-0 left-1/2 transform -translate-x-1/2 w-full sm:w-2/3 md:w-1/2 z-40 backdrop-blur-lg bg-[#0e0e0e]/80">
       <div className="mx-4 mt-4 px-4 h-12 bg-[#171717] rounded-xl lg:rounded-2xl shadow-md flex items-center justify-between">
         
         {/* Logo */}
@@ -14,7 +14,7 @@ const Navbar = () => {
           to="/"
           className="flex items-center gap-2 hover:opacity-80 transition-all"
         >
-          <img src="/shield.svg" alt="logo" className="h-5" />
+          <img src="/chat-bubbles.svg" alt="logo" className="h-5" />
           <h1 className="text-lg font-bold text-white max-sm:hidden">Vartalap</h1>
         </Link>
 
